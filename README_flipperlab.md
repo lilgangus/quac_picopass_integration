@@ -6,11 +6,11 @@ This app allows you to organize previously recorded signals, of any type, so tha
 
 The app does not provide any recording functionality - you can use the existing Flipperzero apps to create the saved files or import from existing files. Quac! provides some basic functionality to manage your files. Or, you can manage the folder structure manually on your SD card on your PC.
 
-* Supported files include: Sub-Ghz (.sub), RFID (.rfid), Infrared (.ir), NFC (.nfc), and iButton (.ibtn)
+* Supported files include: Sub-Ghz (.sub), RFID (.rfid), Infrared (.ir), NFC (.nfc), iButton (.ibtn), and Picopass/iClass (.picopass)
 
 ## Features
 
-* Playback of sub-ghz, rfid, IR, NFC, and iButton signals
+* Playback of sub-ghz, rfid, IR, NFC, iButton, and Picopass signals
 * Easy navigation
 * Flexible signal organization
 * In-app file management
@@ -21,7 +21,7 @@ The app does not provide any recording functionality - you can use the existing 
 
 ## Signal playback
 
-The signal files are played back as recorded. During playback/transmit, the LED light will flash blue until the action is complete. For SubGhz (non-RAW), RFID, NFC, and iButton signals, they are continuously played back for the durations specified in the Settings.
+The signal files are played back as recorded. During playback/transmit, the LED light will flash blue until the action is complete. For SubGhz (non-RAW), RFID, NFC, iButton, and Picopass signals, they are continuously played back for the durations specified in the Settings.
 
 ## Signal Organization
 

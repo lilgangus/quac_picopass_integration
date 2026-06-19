@@ -8,6 +8,7 @@
 #include <notification/notification_messages.h>
 
 #include "action_i.h"
+#include "action_picopass.h"
 #include "quac.h"
 
 /** Open the Playlist file and then transmit each action
@@ -20,6 +21,11 @@
  *      If an .rfid file has a space followed by a number, that will be the
  *      duration for that RFID transmission. All other .rfid files will use
  *      the value specified in the Settings
+ * 
+ *      A .picopass file may be followed by an optional parameter:
+ *        <nothing>  use the default Picopass Duration from Settings
+ *        <number>   emulate for that many milliseconds
+ *        manual     emulate until the user presses a button
  * 
  *   pause <ms>
  *      Pauses the playback for 'ms' milliseconds.
@@ -35,6 +41,7 @@ void action_qpl_tx(void* context, const FuriString* action_path, FuriString* err
     uint32_t orig_rfid_duration = app->settings.rfid_duration;
     uint32_t orig_nfc_duration = app->settings.nfc_duration;
     uint32_t orig_ibutton_duration = app->settings.ibutton_duration;
+    uint32_t orig_picopass_duration = app->settings.picopass_duration;
 
     FuriString* buffer;
     buffer = furi_string_alloc();
@@ -124,6 +131,18 @@ void action_qpl_tx(void* context, const FuriString* action_path, FuriString* err
                         FURI_LOG_I(TAG, "iButton duration = %lu", ibutton_duration);
                         app->settings.ibutton_duration = ibutton_duration;
                     }
+                } else if(!strcmp(ext, ".picopass")) {
+                    // Optional param: "manual" (playlist only) or a duration in ms
+                    if(furi_string_cmpi_str(buffer, "manual") == 0) {
+                        FURI_LOG_I(TAG, "Picopass duration = manual");
+                        app->settings.picopass_duration = PICOPASS_TX_MANUAL;
+                    } else {
+                        uint32_t picopass_duration = 0;
+                        if(sscanf(furi_string_get_cstr(buffer), "%lu", &picopass_duration) == 1) {
+                            FURI_LOG_I(TAG, "Picopass duration = %lu", picopass_duration);
+                            app->settings.picopass_duration = picopass_duration;
+                        }
+                    }
                 }
 
             } while(false);
@@ -166,6 +185,12 @@ void action_qpl_tx(void* context, const FuriString* action_path, FuriString* err
                 action_ibutton_tx(context, buffer, error);
                 // Reset our default duration back - in case it was changed during playback
                 app->settings.ibutton_duration = orig_ibutton_duration;
+            } else if(!strcmp(ext, ".picopass")) {
+                // Playlist may override duration; PICOPASS_TX_MANUAL waits for a button press
+                action_picopass_tx_duration(
+                    context, buffer, app->settings.picopass_duration, error);
+                // Reset our default duration back - in case it was changed during playback
+                app->settings.picopass_duration = orig_picopass_duration;
             } else if(!strcmp(ext, ".qpl")) {
                 ACTION_SET_ERROR("Playlist: Can't call playlist from playlist");
             } else {

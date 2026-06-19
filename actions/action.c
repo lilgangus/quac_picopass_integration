@@ -2,6 +2,7 @@
 #include "quac.h"
 #include "item.h"
 #include "action_i.h"
+#include "action_picopass.h"
 
 void action_ql_resolve(
     void* context,
@@ -71,6 +72,8 @@ void action_tx(void* context, Item* item, FuriString* error) {
         action_nfc_tx(context, path, error);
     } else if(!strcmp(item->ext, ".ibtn")) {
         action_ibutton_tx(context, path, error);
+    } else if(!strcmp(item->ext, ".picopass")) {
+        action_picopass_tx(context, path, error);
     } else if(!strcmp(item->ext, ".qpl")) {
         action_qpl_tx(context, path, error);
     } else {
